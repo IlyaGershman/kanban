@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #1f1616;
+  font-size       : 10px;
+}
+
+.Board {
+  font-family: sans-serif;
+  white-space: nowrap;
+}
+
+.Column {
+  display       : inline-block;
+  vertical-align: top;
+  width         : 225px;
+  padding       : 10px 15px;
+  border-radius : 5px;
+  margin-right  : 20px;
+  background    : #080808;
+  color         : #ffffff;
+  max-height    : 98vh;
+  overflow      : auto;
+}
+
+.Column__title {
+  font-size    : 18px;
+  margin-bottom: 10px;
+}
+
+.Card {
+  padding      : 5px;
+  background   : #3c3c3c;
+  color        : #ffffff;
+  border-radius: 2px;
+  margin-bottom: 5px;
+  cursor       : move;
+  white-space  : normal;
+}
+
+.Card--spacer,
+.Card--dragging {
+  opacity: 0;
+}
+
+.TextForm__input {
+  display      : block;
+  background   : #f4fffd;
+  width        : 100%;
+  border-radius: 3px;
+  border       : none;
+  font-size    : 16px;
+  padding      : 5px;
+  margin-bottom: 5px;
+  opacity      : 0.7;
+}
+
+.TextForm__input:focus {
+  opacity: 1;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color  : #413737;
+}
+
+::-webkit-scrollbar {
+  width           : 6px;
+  background-color: #413737;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #000000;
+}
