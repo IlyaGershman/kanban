@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Column } from './Column'
 import { CardHook } from './CardHook'
-import { CardHookNoDrop } from './CardHookNoDrop'
 
 // 1) A map of (x, y) coordinates keyed by id
 const coordinates = {}
