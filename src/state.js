@@ -5,6 +5,7 @@ import produce from 'immer'
 
 let _columnId = 0
 let _cardId = 0
+let LEN = 10
 
 const CARD = 'card'
 const COLUMN = 'column'
@@ -18,15 +19,15 @@ export const initialState = {
   columns: columnsData.map(({ title, emoji }, i) => ({
     id: uuid(COLUMN),
     title,
+    emoji,
     allowRemoveElements: title !== 'TODO',
     cards:
-      // i === 0
-      //   ? assetsTree
-      //   :
-      Array.from({ length: 10 }).map(() => ({
-        id: uuid(CARD),
-        displayName: `${emoji} Card ${++_cardId}`
-      }))
+      i === 0
+        ? assetsTree.slice(0, 200)
+        : Array.from({ length: LEN }).map(() => ({
+            id: uuid(CARD),
+            displayName: `${emoji} Card ${_cardId++ % LEN}`
+          }))
   }))
 }
 
@@ -44,7 +45,7 @@ export const moveCard = (
   const sameColumnOfOrigin = columnOfOrigin.id === column.id
   const { allowRemoveElements } = columnOfOrigin
   const sameColumn = curX === destX
-
+  let idAdded = null
   const switchPlaces = draft => {
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
@@ -93,6 +94,7 @@ export const moveCard = (
       case sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
         // item was dropped from origin to another column
         putNewCard(draft, generateCard(card))
+        // switchPlaces(draft)
         console.log('origin | current | canRemoveFromOrigin', [0, 1, 1])
         console.log('item was dropped from origin to another column')
         break
@@ -112,5 +114,23 @@ export const moveCard = (
       default:
         break
     }
+  })
+}
+
+export const addCard = (columnId, displayName = 'Card?') => state => {
+  console.log('addCard')
+  return produce(state, draft => {
+    draft.columns[columnId].cards.push(generateCard({ displayName }))
+  })
+}
+
+export const removeAddedByHover = cardId => state => {
+  produce(state, draft => {
+    draft.columns.map((column, i) => {
+      draft.columns[i].cards = column.cards.filter(card => card.id !== cardId)
+    })
+
+    console.log(_.isEqual(draft, state))
+    return draft
   })
 }

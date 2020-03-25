@@ -1,12 +1,18 @@
-import React, { useRef } from 'react'
+import React, { useRef, memo } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import cn from 'classnames'
 import _ from 'lodash'
 
-export function CardHook ({ moveCard, column, getCoordinates, title, id }) {
+export const Card = memo(function ({
+  moveCard,
+  column,
+  getCoordinates,
+  title,
+  id
+}) {
   const ref = useRef(null)
   const [{ isDragging }, drag] = useDrag({
-    item: { id, type: 'Card', columnOfOrigin: column },
+    item: { id, type: 'Card', title, columnOfOrigin: column },
     collect: monitor => ({
       isDragging: !!monitor.isDragging()
     })
@@ -46,7 +52,7 @@ export function CardHook ({ moveCard, column, getCoordinates, title, id }) {
       <div className='Card__title'>{title}</div>
     </div>
   )
-}
+})
 
 // const dt = DropTarget(
 //   'Card',

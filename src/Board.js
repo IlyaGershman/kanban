@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Column } from './Column'
-import { CardHook } from './CardHook'
+import { Card } from './Card'
+import { DropPlaceholder } from './DropPlaceholder'
 
 // 1) A map of (x, y) coordinates keyed by id
 const coordinates = {}
@@ -8,7 +9,7 @@ const coordinates = {}
 const getCoordinates = id => coordinates[id]
 
 // A Kanban Board!
-export function Board ({ columns, moveCard, addCard, addColumn }) {
+export function Board ({ columns, moveCard, addCard, removeAddedByHover }) {
   return (
     <div className='Board'>
       {columns.map((column, x) => (
@@ -24,15 +25,26 @@ export function Board ({ columns, moveCard, addCard, addColumn }) {
             // getCoordinates(id) will always be current
             coordinates[card.id] = [x, y]
             return (
-              <CardHook
-                key={card.id}
-                title={card.displayName}
-                column={column}
-                // Props required for drag and drop
-                id={card.id}
-                getCoordinates={getCoordinates}
-                moveCard={moveCard}
-              />
+              <React.Fragment key={card.id}>
+                <Card
+                  title={card.displayName}
+                  column={column}
+                  // Props required for drag and drop
+                  id={card.id}
+                  getCoordinates={getCoordinates}
+                  moveCard={moveCard}
+                />
+                {column.cards.length - 1 === y ? (
+                  <DropPlaceholder
+                    removeAddedByHover={removeAddedByHover}
+                    // Props required for drag and drop
+                    getCoordinates={getCoordinates}
+                    addCard={addCard.bind(null, x)}
+                  />
+                ) : (
+                  ''
+                )}
+              </React.Fragment>
             )
           })}
         </Column>

@@ -22,6 +22,8 @@ body {
   color         : #ffffff;
   max-height    : 97vh;
   overflow      : auto;
+  min-height    : 97vh;
+  max-height    : 97vh;
 }
 
 .Column__title {
@@ -66,7 +68,17 @@ body {
   opacity: 1;
 }
 
-::-webkit-scrollbar-track {
+.DropPlaceholder {
+  display: flex;
+  height : -webkit-fill-available;
+}
+
+.DropPlaceholder--isOver {
+  border: 1px dashed #666666;
+}
+
+
+*/ ::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color  : #413737;
 }

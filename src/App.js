@@ -10,10 +10,23 @@ export default class App extends Component {
     this.setState(state.moveCard(curPos, nextPos, columnOfOrigin))
   }
 
+  addCard = (columnId, displayName) => {
+    this.setState(state.addCard(columnId, displayName))
+  }
+
+  removeAddedByHover = card => {
+    this.setState(state.removeAddedByHover(card))
+  }
+
   render () {
     return (
       <DndProvider backend={Backend}>
-        <Board columns={this.state.columns} moveCard={this.moveCard} />
+        <Board
+          columns={this.state.columns}
+          moveCard={this.moveCard}
+          addCard={this.addCard}
+          removeAddedByHover={this.removeAddedByHover}
+        />
       </DndProvider>
     )
   }
