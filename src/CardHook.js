@@ -40,7 +40,7 @@ export function CardHook ({ moveCard, column, getCoordinates, title, id }) {
     <div
       ref={ref}
       className={cn('Card', {
-        'Card--dragging': isDragging
+        'Card--dragging': isDragging || isOver
       })}
     >
       <div className='Card__title'>{title}</div>
