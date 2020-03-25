@@ -8,18 +8,24 @@ let _cardId = 0
 const CARD = 'card'
 const COLUMN = 'column'
 
+const columnsData = [
+  { title: 'TODO', emoji: '🔥' },
+  { title: 'Doing', emoji: '🥕' }
+  // { title: 'Done', emoji: '🍄' }
+]
 export const initialState = {
-  columns: ['TODO', 'Doing', 'Done', 'Fi'].map((title, i) => ({
+  columns: columnsData.map(({ title, emoji }, i) => ({
     id: uuid(COLUMN),
     title,
-    removeFromOriginal: title !== 'TODO',
+    removeFromOriginal: true, //title !== 'TODO',
     cards:
-      i === 0
-        ? assetsTree
-        : Array.from({ length: 5 }).map(() => ({
-            id: uuid(CARD),
-            displayName: `Card ${++_cardId}`
-          }))
+      // i === 0
+      //   ? assetsTree
+      //   :
+      Array.from({ length: 300 }).map(() => ({
+        id: uuid(CARD),
+        displayName: `${emoji} Card ${++_cardId}`
+      }))
   }))
 }
 
@@ -36,6 +42,7 @@ const updateColumnCards = (columnIndex, updateCards) => ({ columns }) => ({
 
 export const moveCard = ([curX, curY], [destX, destY]) => state => {
   // 1) Stash card so we can insert at destination
+  console.log('curX, curY, destX, destY', curX, curY, destX, destY)
   const card = state.columns[curX].cards[curY]
   const { removeFromOriginal } = state.columns[curX]
   const insertAtDestination = updateColumnCards(destX, cards => [

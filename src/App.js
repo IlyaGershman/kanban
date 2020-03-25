@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
 import * as state from './state'
 import { Board } from './Board'
 
-class App extends Component {
+export default class App extends Component {
   state = state.initialState
   addColumn = title => {
     this.setState(state.addColumn(title))
@@ -20,14 +20,14 @@ class App extends Component {
 
   render () {
     return (
-      <Board
-        columns={this.state.columns}
-        moveCard={this.moveCard}
-        addCard={this.addCard}
-        addColumn={this.addColumn}
-      />
+      <DndProvider backend={Backend}>
+        <Board
+          columns={this.state.columns}
+          moveCard={this.moveCard}
+          addCard={this.addCard}
+          addColumn={this.addColumn}
+        />
+      </DndProvider>
     )
   }
 }
-
-export default DragDropContext(HTML5Backend)(App)
