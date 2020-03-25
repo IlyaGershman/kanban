@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Column } from './Column'
 import { CardHook } from './CardHook'
+import { CardHookNoDrop } from './CardHookNoDrop'
 
 // 1) A map of (x, y) coordinates keyed by id
 const coordinates = {}
@@ -27,6 +28,7 @@ export function Board ({ columns, moveCard, addCard, addColumn }) {
               <CardHook
                 key={card.id}
                 title={card.displayName}
+                column={column}
                 // Props required for drag and drop
                 id={card.id}
                 getCoordinates={getCoordinates}

@@ -3,10 +3,10 @@ import { useDrag, useDrop } from 'react-dnd'
 import cn from 'classnames'
 import _ from 'lodash'
 
-export function CardHook ({ moveCard, getCoordinates, title, id }) {
+export function CardHook ({ moveCard, column, getCoordinates, title, id }) {
   const ref = useRef(null)
   const [{ isDragging }, drag] = useDrag({
-    item: { id, type: 'Card' },
+    item: { id, type: 'Card', columnOfOrigin: column },
     collect: monitor => ({
       isDragging: !!monitor.isDragging()
     })
@@ -14,10 +14,18 @@ export function CardHook ({ moveCard, getCoordinates, title, id }) {
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'Card',
-    hover: (item, monitor) => {
-      const draggingItem = monitor.getItem()
-      if (draggingItem.id !== id) {
-        moveCard(getCoordinates(draggingItem.id), getCoordinates(id))
+    options: {
+      arePropsEqual: (props, otherProps) => {
+        return props.id === otherProps.id
+      }
+    },
+    hover: item => {
+      if (item.id !== id) {
+        moveCard(
+          getCoordinates(item.id),
+          getCoordinates(id),
+          item.columnOfOrigin
+        )
       }
     },
     collect: monitor => ({

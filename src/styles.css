@@ -15,8 +15,7 @@ body {
 .Column {
   display       : inline-block;
   vertical-align: top;
-  width         : 225px;
-  padding       : 10px 15px;
+  width         : 150px;
   border-radius : 5px;
   margin-right  : 20px;
   background    : #080808;
@@ -31,18 +30,21 @@ body {
 }
 
 .Card {
-  padding      : 5px;
-  background   : #3c3c3c;
-  color        : #ffffff;
-  border-radius: 2px;
-  margin-bottom: 5px;
-  cursor       : move;
-  white-space  : normal;
+  padding        : 5px;
+  background     : #3c3c3c;
+  color          : #ffffff;
+  border-radius  : 2px;
+  margin-bottom  : 5px;
+  cursor         : move;
+  white-space    : normal;
+  display        : flex;
+  align-items    : center;
+  justify-content: space-evenly;
 }
 
 .Card--spacer,
 .Card--dragging {
-  opacity: 0;
+  opacity: 0.4;
 }
 
 .TextForm__input {
