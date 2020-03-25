@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Column } from './Column'
-import { DraggableCard } from './Card'
-import { TextInput } from './TextInput'
+import { CardHook } from './CardHook'
+import { CardHookNoDrop } from './CardHookNoDrop'
 
 // 1) A map of (x, y) coordinates keyed by id
 const coordinates = {}
@@ -17,7 +17,7 @@ export function Board ({ columns, moveCard, addCard, addColumn }) {
           key={column.id}
           title={column.title}
           // bind columnId as the 1st argument
-          addCard={addCard.bind(null, column.id)}
+          // addCard={addCard.bind(null, column.id)}
         >
           {column.cards.map((card, y) => {
             // 3) By setting coordinates in render
@@ -25,9 +25,10 @@ export function Board ({ columns, moveCard, addCard, addColumn }) {
             // getCoordinates(id) will always be current
             coordinates[card.id] = [x, y]
             return (
-              <DraggableCard
+              <CardHook
                 key={card.id}
                 title={card.displayName}
+                column={column}
                 // Props required for drag and drop
                 id={card.id}
                 getCoordinates={getCoordinates}
@@ -35,19 +36,8 @@ export function Board ({ columns, moveCard, addCard, addColumn }) {
               />
             )
           })}
-          {column.cards.length === 0 && (
-            <DraggableCard
-              isSpacer
-              id={null}
-              getCoordinates={id => (id === null ? [x, 0] : getCoordinates(id))}
-              moveCard={moveCard}
-            />
-          )}
         </Column>
       ))}
-      <div className='Column'>
-        <TextInput onSubmit={addColumn} placeholder='Add Column...' />
-      </div>
     </div>
   )
 }

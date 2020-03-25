@@ -6,7 +6,7 @@ export function Column (props) {
     <div className='Column'>
       <div className='Column__title'>{props.title}</div>
       {props.children}
-      <TextInput onSubmit={props.addCard} placeholder='Add card...' />
+      {/* <TextInput onSubmit={props.addCard} placeholder='Add card...' /> */}
     </div>
   )
 }
