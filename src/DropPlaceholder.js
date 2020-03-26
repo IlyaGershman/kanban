@@ -3,7 +3,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import cn from 'classnames'
 import _ from 'lodash'
 
-export function DropPlaceholder ({ addCard, removeAddedByHover }) {
+export function DropPlaceholder ({ addCard, removeAddedByHover, id }) {
   const ref = useRef(null)
 
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -30,6 +30,7 @@ export function DropPlaceholder ({ addCard, removeAddedByHover }) {
   return (
     <div
       ref={ref}
+      key={id}
       className={cn('DropPlaceholder', {
         'DropPlaceholder--isOver': isOver
       })}

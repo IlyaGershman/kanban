@@ -37,6 +37,7 @@ export function Board ({ columns, moveCard, addCard, removeAddedByHover }) {
                 {column.cards.length - 1 === y ? (
                   <DropPlaceholder
                     removeAddedByHover={removeAddedByHover}
+                    id={column.id}
                     // Props required for drag and drop
                     getCoordinates={getCoordinates}
                     addCard={addCard.bind(null, x)}
