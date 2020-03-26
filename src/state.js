@@ -22,12 +22,13 @@ export const initialState = {
     emoji,
     allowRemoveElements: title !== 'TODO',
     cards:
-      i === 0
-        ? assetsTree.slice(0, 200)
-        : Array.from({ length: LEN }).map(() => ({
-            id: uuid(CARD),
-            displayName: `${emoji} Card ${_cardId++ % LEN}`
-          }))
+      // i === 0
+      //   ? assetsTree.slice(0, 200)
+      //   :
+      Array.from({ length: LEN }).map(() => ({
+        id: uuid(CARD),
+        displayName: `${emoji} Card ${_cardId++ % LEN}`
+      }))
   }))
 }
 
@@ -45,7 +46,7 @@ export const moveCard = (
   const sameColumnOfOrigin = columnOfOrigin.id === column.id
   const { allowRemoveElements } = columnOfOrigin
   const sameColumn = curX === destX
-  let idAdded = null
+  // help functions
   const switchPlaces = draft => {
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
@@ -72,6 +73,7 @@ export const moveCard = (
   }
 
   console.log('=======================================')
+  // the idea is to create state machine with all the cases and to analyze
   return produce(state, draft => {
     switch (true) {
       case sameColumnOfOrigin && sameColumn && allowRemoveElements:
@@ -126,11 +128,18 @@ export const addCard = (columnId, displayName = 'Card?') => state => {
 
 export const removeAddedByHover = cardId => state => {
   produce(state, draft => {
-    draft.columns.map((column, i) => {
-      draft.columns[i].cards = column.cards.filter(card => card.id !== cardId)
+    let changes = {}
+    state.columns.forEach((column, x) => {
+      column.cards.forEach((card, y) => {
+        if (card.id == cardId) changes[x] = y
+      })
     })
 
+    Object.entries(changes).forEach(([key, value], i) => {
+      console.log(key, value)
+    })
+
+    console.log(container)
     console.log(_.isEqual(draft, state))
-    return draft
   })
 }

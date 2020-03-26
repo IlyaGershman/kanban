@@ -8,12 +8,15 @@ body {
 }
 
 .Board {
-  font-family: sans-serif;
-  white-space: nowrap;
+  display        : flex;
+  justify-content: space-evenly;
+  font-family    : sans-serif;
+  white-space    : nowrap;
 }
 
 .Column {
-  display       : inline-block;
+  display       : flex;
+  flex-direction: column;
   vertical-align: top;
   width         : 150px;
   border-radius : 5px;
@@ -28,7 +31,7 @@ body {
 
 .Column__title {
   font-size      : 18px;
-  height         : 42px;
+  min-height     : 42px;
   display        : flex;
   justify-content: center;
   align-items    : center;
@@ -69,8 +72,9 @@ body {
 }
 
 .DropPlaceholder {
-  display: flex;
-  height : -webkit-fill-available;
+  display   : flex;
+  height    : 100%;
+  min-height: 42px;
 }
 
 .DropPlaceholder--isOver {
