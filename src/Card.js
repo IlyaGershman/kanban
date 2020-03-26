@@ -47,7 +47,7 @@ export const Card = memo(function ({
       ref={ref}
       key={id}
       className={cn('Card', {
-        'Card--dragging': isDragging || isOver
+        'Card--dragging': isDragging
       })}
     >
       <div className='Card__title'>{title}</div>

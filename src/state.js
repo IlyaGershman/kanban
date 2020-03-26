@@ -31,7 +31,7 @@ export const initialState = {
     id: uuid(COLUMN),
     title,
     emoji,
-    allowRemoveElements: title !== 'TODO' && title !== 'Done',
+    allowRemoveElements: title !== 'TODO',
     cards:
       // i === 0
       //   ? assetsTree.slice(0, 200)
@@ -49,14 +49,11 @@ export const moveCard = (
   columnOfOrigin
 ) => state => {
   // 1) Stash card so we can insert at destination
-  console.log(`curX: ${curX}, curY: ${curY}, destX: ${destX}, destY: ${destY}`)
   const card = state.columns[curX].cards[curY]
-  const column = state.columns[curX]
-  const sameColumnOfOrigin = columnOfOrigin.id === column.id
-  const { allowRemoveElements } = columnOfOrigin
-  const sameColumn = curX === destX
+
   // help functions
   const switchPlaces = draft => {
+    console.log('switchPlaces')
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
   }
@@ -66,13 +63,17 @@ export const moveCard = (
     draft.columns[destX].cards.splice(destY, 0, card) // replace
   }
 
+  const remove = draft => {
+    draft.columns[curX].cards.splice(curY, 1)
+  }
+
   const switchPlacesAndRemoveDuplicates = draft => {
     console.log('switchPlacesAndRemoveDuplicates')
 
     // find duplicates and remove them
     let changes = Object.entries(detectDuplicates(card.id, state))
     if (changes.length > 0) {
-      console.log(changes)
+      // console.log(changes)
       changes.forEach(([x, y]) => {
         draft.columns[x].cards.splice(y, 1)
       })
@@ -81,35 +82,56 @@ export const moveCard = (
     if (destCol.allowRemoveElements) destCol.cards.splice(destY, 0, card) // replace
   }
 
-  console.log('=======================================')
+  const isOriginColumn = columnOfOrigin.id === state.columns[destX].id
+  const fromOriginColumn = columnOfOrigin.id === state.columns[curX].id
+  const changedColumn = curX !== destX
+  const canRemoveInCurrentColumn = state.columns[curX].allowRemoveElements
+  const canRemoveOrigin = columnOfOrigin.allowRemoveElements
 
+  console.log('=======================================')
+  console.log(`curX: ${curX}, curY: ${curY}, destX: ${destX}, destY: ${destY}`)
+  console.log('=======================================')
   console.log(
     `
-    dragging: ${card.id}
-    sameColumnOfOrigin:  ${sameColumnOfOrigin}
-    sameColumn: ${sameColumn}
-    allowRemoveElementsAtOrigin: ${allowRemoveElements}
+      dragging: ${card.id}
+      isOriginColumn:  ${isOriginColumn}
+      fromOriginColumn:  ${fromOriginColumn}
+      changedColumn: ${changedColumn}
+      canRemoveInCurrentColumn: ${canRemoveInCurrentColumn}
+      canRemoveOrigin: ${canRemoveOrigin}
     `
   )
+  console.log('=======================================')
 
   // the idea is to create state machine with all the cases and to analyze
   return produce(state, draft => {
     switch (true) {
-      case sameColumnOfOrigin && sameColumn && allowRemoveElements:
-      case sameColumnOfOrigin && sameColumn && !allowRemoveElements:
-      case sameColumnOfOrigin && !sameColumn && allowRemoveElements:
-      case !sameColumnOfOrigin && sameColumn && allowRemoveElements:
-      case !sameColumnOfOrigin && sameColumn && !allowRemoveElements:
-      case !sameColumnOfOrigin && !sameColumn && allowRemoveElements:
+      case isOriginColumn && changedColumn && canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && !changedColumn && canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && !changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+
+      case !isOriginColumn && changedColumn && canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && !changedColumn && canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && !changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
+      case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
         switchPlaces(draft)
         break
-      case !sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
-        switchPlacesAndRemoveDuplicates(draft)
+      case !isOriginColumn && fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+        putNew(draft)
         break
-      case sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
-        putNew(draft, generateCard(card))
+      case !isOriginColumn && !fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+        switchPlaces(draft)
         break
-
+      case isOriginColumn && changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
+        remove(draft)
+        break
       default:
         break
     }
