@@ -31,7 +31,7 @@ export const initialState = {
     id: uuid(COLUMN),
     title,
     emoji,
-    allowRemoveElements: title !== 'TODO',
+    allowRemoveElements: title !== 'TODO' && title !== 'Done',
     cards:
       // i === 0
       //   ? assetsTree.slice(0, 200)
@@ -49,7 +49,7 @@ export const moveCard = (
   columnOfOrigin
 ) => state => {
   // 1) Stash card so we can insert at destination
-  // console.log('curX, curY, destX, destY', curX, curY, destX, destY)
+  console.log(`curX: ${curX}, curY: ${curY}, destX: ${destX}, destY: ${destY}`)
   const card = state.columns[curX].cards[curY]
   const column = state.columns[curX]
   const sameColumnOfOrigin = columnOfOrigin.id === column.id
@@ -61,8 +61,8 @@ export const moveCard = (
     draft.columns[destX].cards.splice(destY, 0, card) // replace
   }
 
-  const putNewCard = draft => {
-    console.log('putNewCard')
+  const putNew = draft => {
+    console.log('putNew')
     draft.columns[destX].cards.splice(destY, 0, card) // replace
   }
 
@@ -82,44 +82,32 @@ export const moveCard = (
   }
 
   console.log('=======================================')
+
+  console.log(
+    `
+    dragging: ${card.id}
+    sameColumnOfOrigin:  ${sameColumnOfOrigin}
+    sameColumn: ${sameColumn}
+    allowRemoveElementsAtOrigin: ${allowRemoveElements}
+    `
+  )
+
   // the idea is to create state machine with all the cases and to analyze
   return produce(state, draft => {
     switch (true) {
       case sameColumnOfOrigin && sameColumn && allowRemoveElements:
-        switchPlaces(draft)
-        console.log(`origin: ${0} , current: ${0} , canRemoveFromOrigin ${0}`)
-        break
-      case !sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
-        // switching between columns which remove disabled from origin column
-        switchPlacesAndRemoveDuplicates(draft)
-        console.log(`origin: ${1} , current: ${1} , canRemoveFromOrigin ${1}`)
-        break
       case sameColumnOfOrigin && sameColumn && !allowRemoveElements:
-        switchPlaces(draft)
-        console.log(`origin: ${0} , current: ${0} , canRemoveFromOrigin ${1}`)
-        break
       case sameColumnOfOrigin && !sameColumn && allowRemoveElements:
-        switchPlaces(draft)
-        console.log(`origin: ${0} , current: ${1} , canRemoveFromOrigin ${0}`)
-        break
-      case sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
-        // item was dropped from origin to another column
-        putNewCard(draft, generateCard(card))
-        // switchPlaces(draft)
-        console.log(`origin: ${0} , current: ${1} , canRemoveFromOrigin ${1}`)
-        console.log('item was dropped from origin to another column')
-        break
       case !sameColumnOfOrigin && sameColumn && allowRemoveElements:
-        switchPlaces(draft)
-        console.log(`origin: ${1} , current: ${0} , canRemoveFromOrigin ${0}`)
-        break
       case !sameColumnOfOrigin && sameColumn && !allowRemoveElements:
-        switchPlaces(draft)
-        console.log(`origin: ${1} , current: ${0} , canRemoveFromOrigin ${1}`)
-        break
       case !sameColumnOfOrigin && !sameColumn && allowRemoveElements:
         switchPlaces(draft)
-        console.log(`origin: ${1} , current: ${1} , canRemoveFromOrigin ${0}`)
+        break
+      case !sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
+        switchPlacesAndRemoveDuplicates(draft)
+        break
+      case sameColumnOfOrigin && !sameColumn && !allowRemoveElements:
+        putNew(draft, generateCard(card))
         break
 
       default:
