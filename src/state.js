@@ -3,19 +3,67 @@ import { uuid } from 'uuidv4'
 import { assetsTree } from './mocks/MOCK_DATA'
 import produce from 'immer'
 
-let _columnId = 0
-let _cardId = 0
 let LEN = 10
 
+let _cardCounter = 0
 const CARD = 'card'
 const COLUMN = 'column'
 const columnsData = [
   { title: 'TODO', emoji: '🔥' },
-  { title: 'Doing', emoji: '🥕' },
-  { title: 'Done', emoji: '🍄' } //⤵️⤴️
+  { title: 'Doing', emoji: '🥕' }
+  // { title: 'Done', emoji: '🍄' } //⤵️⤴️
 ]
 
-const generateCard = card => ({ ...card, id: uuid(CARD) })
+export const coordinates = {}
+const columns = []
+
+columnsData.forEach(({ title, emoji }, x) => {
+  columns[x] = {
+    id: uuid(COLUMN),
+    title,
+    emoji,
+    cards: [],
+    allowRemoveElements: title !== 'TODO'
+  }
+
+  Array.from({ length: LEN }).forEach((c, y) => {
+    const id = uuid(`${emoji}${CARD}`)
+
+    coordinates[id] = [x, y]
+    columns[x].cards.push({
+      id,
+      displayName: `${emoji} ${CARD} ${_cardCounter++ % LEN}`
+    })
+  })
+})
+export const initialState = { columns }
+
+const setCoordinate = (id, x, y) => {
+  coordinates[id] = [x, y]
+}
+
+export const getCoordinate = id => {
+  return coordinates[id]
+}
+
+const switchCoordinates = (sourceId, targetId) => {
+  const [tX, tY] = getCoordinate(targetId)
+  const [sX, sY] = getCoordinate(sourceId)
+  setCoordinate(sourceId, tX, tY)
+  setCoordinate(targetId, sX, sY)
+}
+
+const removeSourceReplaceTargetCoordinate = (sourceId, targetId) => {
+  const [sX, sY] = getCoordinate(sourceId)
+  delete coordinates[sourceId]
+
+  setCoordinate(targetId, sX, sY)
+}
+
+// coordinates state
+
+const generateCard = card => ({ ...card, id: `${card.id}_dragged` })
+
 const detectDuplicates = (id, state) => {
   let changes = {}
   state.columns.forEach((column, x) => {
@@ -26,40 +74,27 @@ const detectDuplicates = (id, state) => {
   return changes
 }
 
-export const initialState = {
-  columns: columnsData.map(({ title, emoji }, i) => ({
-    id: uuid(COLUMN),
-    title,
-    emoji,
-    allowRemoveElements: title !== 'TODO' && title !== 'Done',
-    cards:
-      // i === 0
-      //   ? assetsTree.slice(0, 200)
-      //   :
-      Array.from({ length: LEN }).map(() => ({
-        id: uuid(`${emoji}CARD`),
-        displayName: `${emoji} Card ${_cardId++ % LEN}`
-      }))
-  }))
-}
-
-export const moveCard = (current, dest, columnOfOrigin) => state => {
-  console.log(current, dest)
-  const [curX, curY] = current
-  const [destX, destY] = dest
+export const moveCard = (curId, destId, columnOfOrigin) => state => {
+  console.log(curId, destId)
+  const [curX, curY] = getCoordinate(curId)
+  const [destX, destY] = getCoordinate(destId)
   // 1) Stash card so we can insert at destination
   const card = state.columns[curX].cards[curY]
 
   // help functions
-  const switchPlaces = draft => {
+  const removeCurrentReplaceTarget = draft => {
     console.log('switchPlaces')
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
+    switchCoordinates(
+      draft.columns[curX].cards[curY].id,
+      draft.columns[destX].cards[destY].id
+    )
   }
 
-  const putNew = draft => {
+  const addTargetWithPrefix = draft => {
     console.log('putNew')
-    draft.columns[destX].cards.splice(destY, 0, card) // replace
+    draft.columns[destX].cards.splice(destY, 0, generateCard(card)) // replace
   }
 
   // TODO: check this function something to do with the coordinates
@@ -121,13 +156,13 @@ export const moveCard = (current, dest, columnOfOrigin) => state => {
       case !isOriginColumn && !changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
       case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
       case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
-        switchPlaces(draft)
+        removeCurrentReplaceTarget(draft)
         break
       case !isOriginColumn && fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
-        putNew(draft)
+        addTargetWithPrefix(draft)
         break
       case !isOriginColumn && !fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
-        switchPlaces(draft)
+        removeCurrentReplaceTarget(draft)
         break
       case isOriginColumn && changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
         remove(draft)
