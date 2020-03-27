@@ -31,23 +31,22 @@ export const initialState = {
     id: uuid(COLUMN),
     title,
     emoji,
-    allowRemoveElements: title !== 'TODO',
+    allowRemoveElements: title !== 'TODO' && title !== 'Done',
     cards:
       // i === 0
       //   ? assetsTree.slice(0, 200)
       //   :
       Array.from({ length: LEN }).map(() => ({
-        id: uuid(CARD),
+        id: uuid(`${emoji}CARD`),
         displayName: `${emoji} Card ${_cardId++ % LEN}`
       }))
   }))
 }
 
-export const moveCard = (
-  [curX, curY],
-  [destX, destY],
-  columnOfOrigin
-) => state => {
+export const moveCard = (current, dest, columnOfOrigin) => state => {
+  console.log(current, dest)
+  const [curX, curY] = current
+  const [destX, destY] = dest
   // 1) Stash card so we can insert at destination
   const card = state.columns[curX].cards[curY]
 
@@ -63,6 +62,7 @@ export const moveCard = (
     draft.columns[destX].cards.splice(destY, 0, card) // replace
   }
 
+  // TODO: check this function something to do with the coordinates
   const remove = draft => {
     draft.columns[curX].cards.splice(curY, 1)
   }

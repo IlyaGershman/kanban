@@ -28,8 +28,8 @@ export const Card = memo(function ({
     hover: item => {
       if (item.id !== id) {
         moveCard(
-          getCoordinates(item.id),
-          getCoordinates(id),
+          getCoordinates(item.columnOfOrigin.id, item.id),
+          getCoordinates(column.id, id),
           item.columnOfOrigin
         )
       }
