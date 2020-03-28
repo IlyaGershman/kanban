@@ -82,7 +82,7 @@ export const moveCard = (curId, destId, columnOfOrigin) => state => {
   const card = state.columns[curX].cards[curY]
 
   // help functions
-  const removeCurrentReplaceTarget = draft => {
+  const removeCurrentInsertBeforeTarget = draft => {
     console.log('switchPlaces')
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
@@ -143,13 +143,13 @@ export const moveCard = (curId, destId, columnOfOrigin) => state => {
       case !isOriginColumn && !changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
       case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && canRemoveOrigin: // prettier-ignore
       case !isOriginColumn && !changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
-        removeCurrentReplaceTarget(draft)
+        removeCurrentInsertBeforeTarget(draft)
         break
       case !isOriginColumn && fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
         addTargetWithPrefix(draft)
         break
       case !isOriginColumn && !fromOriginColumn && changedColumn && !canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
-        removeCurrentReplaceTarget(draft)
+        removeCurrentInsertBeforeTarget(draft)
         break
       case isOriginColumn && changedColumn && canRemoveInCurrentColumn && !canRemoveOrigin: // prettier-ignore
         remove(draft)

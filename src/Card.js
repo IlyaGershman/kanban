@@ -6,7 +6,6 @@ import _ from 'lodash'
 export const Card = memo(function ({
   moveCard,
   column,
-  getCoordinates,
   title,
   id
 }) {
