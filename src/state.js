@@ -27,18 +27,19 @@ columnsData.forEach(({ title, emoji }, x) => {
   }
 
   Array.from({ length: LEN }).forEach((c, y) => {
-    const id = uuid(`${emoji}${CARD}`)
+    const id = `${emoji} ${CARD} ${_cardCounter++ % LEN}` //uuid(`${emoji}${CARD}`)
+    const title = uuid(`${emoji}${CARD}`)
 
     coordinates[id] = [x, y]
     columns[x].cards.push({
       id,
-      displayName: `${emoji} ${CARD} ${_cardCounter++ % LEN}`
+      displayName: id //`${emoji} ${CARD} ${_cardCounter++ % LEN}`
     })
   })
 })
 export const initialState = { columns }
 
-const setCoordinate = (id, x, y) => {
+const setCoordinate = (id, [x, y]) => {
   coordinates[id] = [x, y]
 }
 
@@ -49,15 +50,14 @@ export const getCoordinate = id => {
 const switchCoordinates = (sourceId, targetId) => {
   const [tX, tY] = getCoordinate(targetId)
   const [sX, sY] = getCoordinate(sourceId)
-  setCoordinate(sourceId, tX, tY)
-  setCoordinate(targetId, sX, sY)
+  setCoordinate(sourceId, [tX, tY])
+  setCoordinate(targetId, [sX, sY])
 }
 
 const removeSourceReplaceTargetCoordinate = (sourceId, targetId) => {
   const [sX, sY] = getCoordinate(sourceId)
   delete coordinates[sourceId]
-
-  setCoordinate(targetId, sX, sY)
+  setCoordinate(targetId, [sX, sY])
 }
 
 // coordinates state
@@ -87,34 +87,21 @@ export const moveCard = (curId, destId, columnOfOrigin) => state => {
     draft.columns[curX].cards.splice(curY, 1) // remove
     draft.columns[destX].cards.splice(destY, 0, card) // replace
     switchCoordinates(
-      draft.columns[curX].cards[curY].id,
-      draft.columns[destX].cards[destY].id
+      draft.columns[destX].cards[destY].id,
+      draft.columns[curX].cards[curY].id
     )
+    console.log(_.cloneDeep(coordinates))
   }
 
   const addTargetWithPrefix = draft => {
     console.log('putNew')
     draft.columns[destX].cards.splice(destY, 0, generateCard(card)) // replace
+    console.log(_.cloneDeep(coordinates))
   }
 
   // TODO: check this function something to do with the coordinates
   const remove = draft => {
     draft.columns[curX].cards.splice(curY, 1)
-  }
-
-  const switchPlacesAndRemoveDuplicates = draft => {
-    console.log('switchPlacesAndRemoveDuplicates')
-
-    // find duplicates and remove them
-    let changes = Object.entries(detectDuplicates(card.id, state))
-    if (changes.length > 0) {
-      // console.log(changes)
-      changes.forEach(([x, y]) => {
-        draft.columns[x].cards.splice(y, 1)
-      })
-    }
-    const destCol = draft.columns[destX]
-    if (destCol.allowRemoveElements) destCol.cards.splice(destY, 0, card) // replace
   }
 
   const isOriginColumn = columnOfOrigin.id === state.columns[destX].id
@@ -173,10 +160,13 @@ export const moveCard = (curId, destId, columnOfOrigin) => state => {
   })
 }
 
-export const addCard = (columnId, displayName = 'Card?') => state => {
+export const addCard = (x, displayName = 'Card?') => state => {
   console.log('addCard')
   return produce(state, draft => {
-    draft.columns[columnId].cards.push(generateCard({ displayName }))
+    const card = generateCard({ displayName })
+    draft.columns[x].cards.push(card)
+    const y = draft.columns[x].length
+    setCoordinate(card.id, [x, y])
   })
 }
 
@@ -191,3 +181,18 @@ export const removeAddedByHover = cardId => state => {
     }
   })
 }
+
+// const switchPlacesAndRemoveDuplicates = draft => {
+//   console.log('switchPlacesAndRemoveDuplicates')
+
+//   // find duplicates and remove them
+//   let changes = Object.entries(detectDuplicates(card.id, state))
+//   if (changes.length > 0) {
+//     // console.log(changes)
+//     changes.forEach(([x, y]) => {
+//       draft.columns[x].cards.splice(y, 1)
+//     })
+//   }
+//   const destCol = draft.columns[destX]
+//   if (destCol.allowRemoveElements) destCol.cards.splice(destY, 0, card) // replace
+// }
