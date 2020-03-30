@@ -11,6 +11,7 @@
 
 - [ ] nesting 
 
+- [ ] react-sortable-tree check if it's a better way
 - [ ] react-motion, think of animations part 2
 - [ ] understand hooks
       - [ ] React docs again
@@ -30,7 +31,6 @@
 - [x] Try to do it by disabling drop option for the column
 - [x] Create meeting for the DND with product
 - [x] react-motion, think of animations
-- [x] react-sortable-tree check if it's a better way
 - [x] react-beautiful-dnd check if it's a better way 
 - [x] react-motion, think of animations part 1
 - [x] React course NAYA

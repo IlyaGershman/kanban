@@ -59,7 +59,6 @@ const removeSourceReplaceTargetCoordinate = (sourceId, targetId) => {
   delete coordinates[sourceId]
   setCoordinate(targetId, [sX, sY])
 }
-
 // coordinates state
 
 const generateCard = card => ({ ...card, id: `${card.id}_dragged` })
