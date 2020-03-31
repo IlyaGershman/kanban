@@ -10,12 +10,13 @@ const CARD = 'card'
 const COLUMN = 'column'
 const columnsData = [
   { title: 'TODO', emoji: '🔥' },
-  { title: 'Doing', emoji: '🥕' }
-  // { title: 'Done', emoji: '🍄' } //⤵️⤴️
+  { title: 'Doing', emoji: '🥕' },
+  { title: 'Done', emoji: '🍄' } //⤵️⤴️
 ]
 
 export const coordinates = {}
 const columns = []
+const treeData = []
 
 columnsData.forEach(({ title, emoji }, x) => {
   columns[x] = {
@@ -33,11 +34,12 @@ columnsData.forEach(({ title, emoji }, x) => {
     coordinates[id] = [x, y]
     columns[x].cards.push({
       id,
-      displayName: id //`${emoji} ${CARD} ${_cardCounter++ % LEN}`
+      title: id //`${emoji} ${CARD} ${_cardCounter++ % LEN}`
     })
   })
+  treeData.push({ id: uuid('sortable'), title: `${emoji} sortable ${x}` })
 })
-export const initialState = { columns }
+export const initialState = { columns, treeData }
 
 const setCoordinate = (id, [x, y]) => {
   coordinates[id] = [x, y]
@@ -159,10 +161,10 @@ export const moveCard = (curId, destId, columnOfOrigin) => state => {
   })
 }
 
-export const addCard = (x, displayName = 'Card?') => state => {
+export const addCard = (x, title = 'Card?') => state => {
   console.log('addCard')
   return produce(state, draft => {
-    const card = generateCard({ displayName })
+    const card = generateCard({ title })
     draft.columns[x].cards.push(card)
     const y = draft.columns[x].length
     setCoordinate(card.id, [x, y])

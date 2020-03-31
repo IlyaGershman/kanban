@@ -29,6 +29,22 @@ body {
   max-height    : 97vh;
 }
 
+.react-sortable-container {
+  display          : flex;
+  flex-direction   : column;
+  vertical-align   : top;
+  width            : 150px;
+  border-radius    : 5px;
+  margin-right     : 20px;
+  /* background    : #080808;
+  color            : #ffffff; */
+  max-height       : 97vh;
+  overflow         : auto;
+  min-height       : 97vh;
+  max-height       : 97vh;
+  min-width        : 30%;
+}
+
 .Column__title {
   font-size      : 18px;
   min-height     : 42px;

@@ -3,20 +3,24 @@ import Backend from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
 import * as state from './state'
 import { Board } from './Board'
+import 'react-sortable-tree/style.css'
 
 export default class App extends Component {
-  state = state.initialState
+  state = state.initialState // redux
+
   moveCard = (curPos, nextPos, columnOfOrigin) => {
     this.setState(state.moveCard(curPos, nextPos, columnOfOrigin))
   }
 
-  addCard = (columnId, displayName) => {
-    this.setState(state.addCard(columnId, displayName))
+  addCard = (columnId, title) => {
+    this.setState(state.addCard(columnId, title))
   }
 
   removeAddedByHover = card => {
     this.setState(state.removeAddedByHover(card))
   }
+
+  onTreeDataChange = treeData => this.setState({ treeData })
 
   render () {
     return (
@@ -26,6 +30,8 @@ export default class App extends Component {
           moveCard={this.moveCard}
           addCard={this.addCard}
           removeAddedByHover={this.removeAddedByHover}
+          onTreeDataChange={this.onTreeDataChange}
+          treeData={this.state.treeData}
         />
       </DndProvider>
     )

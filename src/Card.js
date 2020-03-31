@@ -3,13 +3,9 @@ import { useDrag, useDrop } from 'react-dnd'
 import cn from 'classnames'
 import _ from 'lodash'
 
-export const Card = memo(function ({
-  moveCard,
-  column,
-  title,
-  id
-}) {
+export const Card = memo(function ({ moveCard, column, title, id }) {
   const ref = useRef(null)
+
   const [{ isDragging }, drag] = useDrag({
     item: { id, type: 'Card', title, columnOfOrigin: column },
     collect: monitor => ({
@@ -19,6 +15,7 @@ export const Card = memo(function ({
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'Card',
+    drop: () => {},
     options: {
       arePropsEqual: (props, otherProps) => {
         return props.id === otherProps.id

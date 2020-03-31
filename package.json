@@ -4,16 +4,17 @@
   "version": "0.0.219",
   "dependencies": {
     "classnames": "2.2.5",
-    "lodash": "4.17.4",
-    "uuidv4": "^6.0.6",
     "immer": "^6.0.2",
+    "lodash": "4.17.4",
     "react": "16.12.0",
     "react-dnd": "10.0.2",
     "react-dnd-html5-backend": "10.0.2",
     "react-dom": "16.12.0",
     "react-motion": "^0.5.2",
     "react-scripts": "3.0.1",
-    "use-immer": "^0.3.5"
+    "react-sortable-tree": "^2.7.1",
+    "use-immer": "^0.3.5",
+    "uuidv4": "^6.0.6"
   },
   "devDependencies": {
     "react-scripts": "1.0.0"
