@@ -9,9 +9,9 @@ let _cardCounter = 0
 const CARD = 'card'
 const COLUMN = 'column'
 const columnsData = [
-  { title: 'TODO', emoji: '🔥' },
-  { title: 'Doing', emoji: '🥕' },
-  { title: 'Done', emoji: '🍄' } //⤵️⤴️
+  { title: '🔥', emoji: '🔥' },
+  { title: '🥕', emoji: '🥕' },
+  { title: '🍄', emoji: '🍄' } //⤵️⤴️
 ]
 
 export const coordinates = {}
