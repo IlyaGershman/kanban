@@ -42,7 +42,8 @@ body {
   overflow         : auto;
   min-height       : 97vh;
   max-height       : 97vh;
-  min-width        : 30%;
+  width            : 30%;
+  min-width        : 360px;
 }
 
 .Column__title {

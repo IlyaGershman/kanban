@@ -8,6 +8,11 @@ export const Card = memo(function ({ moveCard, column, title, id }) {
 
   const [{ isDragging }, drag] = useDrag({
     item: { id, type: 'Card', title, columnOfOrigin: column },
+    begin: monitor => {
+      const i = monitor.getItem()
+      console.log(i)
+      return { node: { id, type: 'Card', title, columnOfOrigin: column } }
+    },
     collect: monitor => ({
       isDragging: !!monitor.isDragging()
     })
